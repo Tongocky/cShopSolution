@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\cShapSolution.Data\cShapSolution.Data.csproj" />
+    <ProjectReference Include="..\cShopSolution.Utilities\cShopSolution.Utilities.csproj" />
+  </ItemGroup>
+
+</Project>
