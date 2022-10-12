@@ -2,13 +2,19 @@
 using cShapSolution.Data.EntitiesFramewor;
 using cShopSolution.Application.Catalog.Products.Dtos;
 using cShopSolution.Application.Catalog.Products.Dtos.Manages;
+using cShopSolution.Application.Catalog.Products.Dtos.Publics;
 using cShopSolution.Application.Catalog.Products.InterfaceService;
-using cShopSolution.Application.Dtos;
+using cShopSolution.Application.Commons;
 using cShopSolution.Utilities.Exceptions;
+using cShopSolution.ViewModels.Catalog.Products;
+using cShopSolution.ViewModels.Common;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,12 +23,15 @@ namespace cShopSolution.Application.Catalog.Products.ClassService
     public class ManagedProducService : IManagedProductService
     {
         private readonly cShopDbContext _context;
-
-        public ManagedProducService(cShopDbContext context)
+        private readonly IStorageService _storageService;
+        public ManagedProducService(cShopDbContext context, IStorageService storageService)
         {
             _context = context;
+            _storageService = storageService;
 
         }
+
+        
 
         public async Task AddViewCount(int ProductId)
         {
@@ -31,51 +40,66 @@ namespace cShopSolution.Application.Catalog.Products.ClassService
             await _context.SaveChangesAsync();
         }
 
-        public async Task<int> Create(ProductCreateRequet requet)
+        public async Task<int> Create(ProductCreateRequet request)
         {
             var product = new Product()
             {
-                Price = requet.Price,
-                OriginalPrice = requet.OriginalPrice,
-                Stock = requet.Stock,
+                Price = request.Price,
+                OriginalPrice = request.OriginalPrice,
+                Stock = request.Stock,
                 ViewCount = 0,
                 DateCreated = DateTime.Now,
                 ProductTranslations = new List<ProductTranslation>()
                 {
                     new ProductTranslation()
                     {
-                        Name = requet.Name,
-                        Description = requet.Description,
-                        Details = requet.Details,
-                        SeoDescription = requet.SeoDescription,
-                        SeoAlias = requet.SeoAlias,
-                        SeoTitle = requet.SeoTitle,
-                        LanguageId = requet.LanguageId
+                        Name =  request.Name,
+                        Description = request.Description,
+                        Details = request.Details,
+                        SeoDescription = request.SeoDescription,
+                        SeoAlias = request.SeoAlias,
+                        SeoTitle = request.SeoTitle,
+                        LanguageId = request.LanguageId
                     }
                 }
-
             };
+            //Save image
+            if (request.ThumbnailImage != null)
+            {
+                product.ProductImages = new List<ProductImage>()
+                {
+                    new ProductImage()
+                    {
+                        Caption = "Thumbnail image",
+                        DateCreated = DateTime.Now,
+                        FileSize = request.ThumbnailImage.Length,
+                        ImagePath = await this.SaveFile(request.ThumbnailImage),
+                        IsDefault = true,
+                        SortOrder = 1
+                    }
+                };
+            }
             _context.Products.Add(product);
             return await _context.SaveChangesAsync();
         }
-
-
         public async Task<int> Delete(int ProductId)
         {
             var product = await _context.Products.FindAsync(ProductId);
-            if (product == null)
+            if (product == null) throw new CShopException($"Cannot find a product: {ProductId}");
+
+            var images = _context.ProductImages.Where(i => i.ProductId == ProductId);
+            foreach (var image in images)
             {
-                throw new CShopException($"Can not a product: {ProductId}");
+                await _storageService.DeleteFileAsync(image.ImagePath);
             }
-            else
-            {
-                _context.Products.Remove(product);
-                return await _context.SaveChangesAsync();
-            }
+
+            _context.Products.Remove(product);
+
+            return await _context.SaveChangesAsync();
 
         }
 
-        public async Task<PagedResult<ProductViewModel>> GetAllPaging(GetProductPagingRequest request)
+        public async Task<PagedResult<ProductViewModel>> GetAllPaging(GetManageProductPagingRequest request)
         {
             // 1 select
             var querry = from p in _context.Products
@@ -85,8 +109,8 @@ namespace cShopSolution.Application.Catalog.Products.ClassService
                          select new { p, pt, pic };
 
             // 2 filter
-            if (string.IsNullOrEmpty(request.keyWork))
-                querry = querry.Where(x => x.pt.Name.Contains(request.keyWork));
+            if (string.IsNullOrEmpty(request.Keyword))
+                querry = querry.Where(x => x.pt.Name.Contains(request.Keyword));
 
             if (request.CategoryIds.Count > 0)
             {
@@ -149,16 +173,16 @@ namespace cShopSolution.Application.Catalog.Products.ClassService
             productTranslation.Details = request.Details;
 
             #region Save image
-            //if (request.ThumbnailImage != null)
-            //{
-            //    var thumbnailImage = await _context.ProductImages.FirstOrDefaultAsync(i => i.IsDefault == true && i.ProductId == request.Id);
-            //    if (thumbnailImage != null)
-            //    {
-            //        thumbnailImage.FileSize = request.ThumbnailImage.Length;
-            //        thumbnailImage.ImagePath = await this.SaveFile(request.ThumbnailImage);
-            //        _context.ProductImages.Update(thumbnailImage);
-            //    }
-            //}
+            if (request.ThumbnailImage != null)
+            {
+                var thumbnailImage = await _context.ProductImages.FirstOrDefaultAsync(i => i.IsDefault == true && i.ProductId == request.Id);
+                if (thumbnailImage != null)
+                {
+                    thumbnailImage.FileSize = request.ThumbnailImage.Length;
+                    thumbnailImage.ImagePath = await this.SaveFile(request.ThumbnailImage);
+                    _context.ProductImages.Update(thumbnailImage);
+                }
+            }
             #endregion
 
             return await _context.SaveChangesAsync();
@@ -182,6 +206,34 @@ namespace cShopSolution.Application.Catalog.Products.ClassService
             if (product == null) throw new CShopException($"Cannot find a product with id: {ProductId}");
             product.Stock += addedQuatity;
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<string> SaveFile(IFormFile file)
+        {
+            var originalFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(originalFileName)}";
+            await _storageService.SaveFileAsync(file.OpenReadStream(), fileName);
+            return fileName;
+        }
+
+        public Task<int> AddImages(int productId, List<IFormFile> files)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> RemoveImages(int imageId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> UpdateImage(int imageId, string caption, bool isDefault)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<ProductImageViewModel>> GetListImage(int productId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

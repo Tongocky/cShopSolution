@@ -180,7 +180,7 @@ namespace cShapSolution.Data.Migrations
                         new
                         {
                             Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dc"),
-                            ConcurrencyStamp = "29604b7a-549d-49c3-b0de-05768581e308",
+                            ConcurrencyStamp = "68314977-6d19-4fa7-92cf-aca47f013a79",
                             Description = "Administrator role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -257,7 +257,7 @@ namespace cShapSolution.Data.Migrations
                         {
                             Id = new Guid("69bd714f-9576-45ba-b5b7-f00649be00de"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "51ec4585-840c-4b78-b791-d267bca55fbd",
+                            ConcurrencyStamp = "59b74d08-778f-4b25-9af6-67337cbbc6fc",
                             Dob = new DateTime(1998, 6, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "ngockyto008@gmail.com",
                             EmailConfirmed = true,
@@ -266,7 +266,7 @@ namespace cShapSolution.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ngockyto008@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAELjlzTQ9Kxc6EvzBcX3WwfEf/8sTRP8Bi1Bkk1DyHieSCVQYVTdV+Jz+qIB5UVEKPg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKmpXuAxLYsmfJ21qoVEZS5VlQdmomquC1KP7f3j4qL60joV4LZam0NSsUi2JNwjIA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -520,7 +520,7 @@ namespace cShapSolution.Data.Migrations
                     b.Property<DateTime>("OrderDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 10, 5, 16, 20, 59, 303, DateTimeKind.Local).AddTicks(1931));
+                        .HasDefaultValue(new DateTime(2022, 10, 11, 14, 22, 43, 871, DateTimeKind.Local).AddTicks(689));
 
                     b.Property<string>("ShipAddress")
                         .IsRequired()
@@ -616,12 +616,52 @@ namespace cShapSolution.Data.Migrations
                         new
                         {
                             Id = 1,
-                            DateCreated = new DateTime(2022, 10, 5, 16, 20, 59, 312, DateTimeKind.Local).AddTicks(1256),
+                            DateCreated = new DateTime(2022, 10, 11, 14, 22, 43, 880, DateTimeKind.Local).AddTicks(2950),
                             OriginalPrice = 100000m,
                             Price = 200000m,
                             Stock = 0,
                             ViewCount = 0
                         });
+                });
+
+            modelBuilder.Entity("cShapSolution.Data.Entities.ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
+                        .HasAnnotation("SqlServer:IdentitySeed", 1)
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Caption")
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("cShapSolution.Data.Entities.ProductInCategory", b =>
@@ -856,6 +896,15 @@ namespace cShapSolution.Data.Migrations
 
                     b.HasOne("cShapSolution.Data.Entities.Product", "Product")
                         .WithMany("OrderDetails")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("cShapSolution.Data.Entities.ProductImage", b =>
+                {
+                    b.HasOne("cShapSolution.Data.Entities.Product", "Product")
+                        .WithMany("ProductImages")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

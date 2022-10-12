@@ -34,6 +34,7 @@ namespace cShapSolution.Data.EntitiesFramewor
             modelBuilder.ApplyConfiguration(new TransactionConfiguration());
             modelBuilder.ApplyConfiguration(new AppRoleConfiguretion());
             modelBuilder.ApplyConfiguration(new AppUserConfiguretion());
+            modelBuilder.ApplyConfiguration(new ProductImageConfiguration());
 
             // Configuration using fluent API in Identity
             modelBuilder.Entity<IdentityUserClaim<Guid>>().ToTable("AppUserClaims");
@@ -61,5 +62,7 @@ namespace cShapSolution.Data.EntitiesFramewor
         public DbSet<ProductTranslation> ProductTranslations { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        
+        public DbSet<ProductImage> ProductImages { get; set; }
     }
 }
