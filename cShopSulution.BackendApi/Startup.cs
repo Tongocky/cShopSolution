@@ -1,6 +1,7 @@
 using cShapSolution.Data.EntitiesFramewor;
 using cShopSolution.Application.Catalog.Products.ClassService;
 using cShopSolution.Application.Catalog.Products.InterfaceService;
+using cShopSolution.Application.Commons;
 using cShopSolution.Utilities.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,8 +28,10 @@ namespace cShopSulution.BackendApi
             services.AddDbContext<cShopDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString(SystemConstants.MainConnetionString)));
             //Declare DI
+            services.AddTransient<IStorageService, FileStorageService>();
             services.AddTransient<IPublicProductService, PublicProductService>();
-            
+            services.AddTransient<IManagedProductService, ManagedProducService>();
+
             services.AddControllersWithViews();
             services.AddSwaggerGen(c =>
             {

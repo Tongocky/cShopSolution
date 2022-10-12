@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cShapSolution.WebApp", "cShapSolution.WebApp\cShapSolution.WebApp.csproj", "{328AD56B-3862-499F-9757-A7196305F876}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B1BFD09-2D04-411D-9618-397588C602D9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0. Solution Items", "0. Solution Items", "{6B1BFD09-2D04-411D-9618-397588C602D9}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
@@ -16,9 +16,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cShopSolution.Application",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cShopSolution.Utilities", "cShopSolution.Utilities\cShopSolution.Utilities.csproj", "{78D749FB-124D-41A0-98DC-E8F53F6A8A3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cShopSolution.ViewModels", "cShopSolution.ViewModels\cShopSolution.ViewModels.csproj", "{2CF89FCD-BDB2-436E-A615-7CFE51E1A885}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cShopSolution.ViewModels", "cShopSolution.ViewModels\cShopSolution.ViewModels.csproj", "{2CF89FCD-BDB2-436E-A615-7CFE51E1A885}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cShopSulution.BackendApi", "cShopSulution.BackendApi\cShopSulution.BackendApi.csproj", "{1E40AD0A-85BA-45D1-8DD5-930372819871}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cShopSulution.BackendApi", "cShopSulution.BackendApi\cShopSulution.BackendApi.csproj", "{1E40AD0A-85BA-45D1-8DD5-930372819871}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Infrastructure", "1. Infrastructure", "{B4A4D245-F9B9-4870-B365-D9D1A280B349}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Domain", "2. Domain", "{8CFF3C09-F5AE-4136-A608-BE4CE81ABB46}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Hosts", "3. Hosts", "{27DFE900-3977-4E59-BB29-DB8333CF7CBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +59,14 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{328AD56B-3862-499F-9757-A7196305F876} = {27DFE900-3977-4E59-BB29-DB8333CF7CBC}
+		{4FBFD8B9-0A49-48F8-B9DF-346C661B4F81} = {8CFF3C09-F5AE-4136-A608-BE4CE81ABB46}
+		{4962153A-5BF1-438D-9623-8EDC0EACD74B} = {8CFF3C09-F5AE-4136-A608-BE4CE81ABB46}
+		{78D749FB-124D-41A0-98DC-E8F53F6A8A3D} = {B4A4D245-F9B9-4870-B365-D9D1A280B349}
+		{2CF89FCD-BDB2-436E-A615-7CFE51E1A885} = {B4A4D245-F9B9-4870-B365-D9D1A280B349}
+		{1E40AD0A-85BA-45D1-8DD5-930372819871} = {27DFE900-3977-4E59-BB29-DB8333CF7CBC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {79B0AA6C-2C38-43B6-B9C9-E715849DAF8A}

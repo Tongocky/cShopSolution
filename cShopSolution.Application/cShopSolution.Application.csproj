@@ -5,14 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\cShapSolution.Data\cShapSolution.Data.csproj" />
     <ProjectReference Include="..\cShopSolution.Utilities\cShopSolution.Utilities.csproj" />
     <ProjectReference Include="..\cShopSolution.ViewModels\cShopSolution.ViewModels.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
 </Project>

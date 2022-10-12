@@ -6,6 +6,7 @@ using cShopSolution.ViewModels.Common;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,7 +29,8 @@ namespace cShopSolution.Application.Catalog.Products.InterfaceService
         Task<int> Delete(int ProductId);
         #endregion
 
-        #region GetList
+        #region Get
+        Task<ProductViewModel> GetById(int productId, string LanguageId);
         Task<List<ProductViewModel>> GetAll();
         Task<PagedResult<ProductViewModel>> GetAllPaging(GetManageProductPagingRequest request);
         Task AddViewCount(int ProductId);
