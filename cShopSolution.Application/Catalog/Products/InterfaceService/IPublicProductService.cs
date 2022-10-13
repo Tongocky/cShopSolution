@@ -12,10 +12,6 @@ namespace cShopSolution.Application.Catalog.Products.InterfaceService
 {
     public interface IPublicProductService
     {
-        Task<PagedResult<ProductViewModel>> GetAllByCategoryId(GetPublicProductPagingRequest request);
-
-        Task<List<ProductViewModel>> GetAll(string LanguageId);
-
-         
+        Task<PagedResult<ProductViewModel>> GetAllByCategoryId(string LanguageId, GetPublicProductPagingRequest request);
     }
 }
